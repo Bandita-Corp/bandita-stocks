@@ -1,0 +1,24 @@
+{
+  "name": "fast-stocks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal stock market candles & news correlation dashboard",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c cyan,green \"npm run dev -w @fast-stocks/backend\" \"npm run dev -w @fast-stocks/frontend\"",
+    "dev:backend": "npm run dev -w @fast-stocks/backend",
+    "dev:frontend": "npm run dev -w @fast-stocks/frontend",
+    "build": "npm run build -w @fast-stocks/backend && npm run build -w @fast-stocks/frontend",
+    "db:up": "docker compose up -d",
+    "db:generate": "npm run prisma:generate -w @fast-stocks/backend",
+    "db:migrate": "npm run prisma:migrate -w @fast-stocks/backend",
+    "db:seed": "npm run prisma:seed -w @fast-stocks/backend",
+    "db:studio": "npm run prisma:studio -w @fast-stocks/backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fast-stocks-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: faststocks
+      POSTGRES_PASSWORD: faststocks_dev_password
+      POSTGRES_DB: fast_stocks
+    ports:
+      - "5440:5432"
+    volumes:
+      - fast_stocks_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U faststocks -d fast_stocks"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  fast_stocks_pgdata:

@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Ticker {
+  id             Int              @id @default(autoincrement())
+  symbol         String           @unique
+  name           String
+  exchange       String?
+  assetType      String           @default("EQUITY")
+  newsQuery      String?
+  notes          String?          @db.Text
+  sortOrder      Int              @default(0)
+  lastPrice      Float?
+  previousClose  Float?
+  change         Float?
+  changePercent  Float?
+  volume         Float?
+  currency       String?          @default("USD")
+  marketState    String?
+  quoteUpdatedAt DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  newsArticles   NewsArticle[]
+  fetchStates    NewsFetchState[]
+}
+
+model NewsArticle {
+  id           String   @id @default(cuid())
+  tickerSymbol String
+  ticker       Ticker   @relation(fields: [tickerSymbol], references: [symbol], onDelete: Cascade)
+  guid         String
+  title        String
+  url          String
+  sourceName   String
+  sourceUrl    String?
+  snippet      String?  @db.Text
+  lang         String   @default("ru")
+  publishedAt  DateTime
+  fetchedAt    DateTime @default(now())
+
+  @@unique([tickerSymbol, guid])
+  @@index([tickerSymbol, lang, publishedAt(sort: Desc)])
+}
+
+model NewsFetchState {
+  tickerSymbol  String
+  lang          String
+  queryUsed     String
+  lastFetchedAt DateTime
+  ticker        Ticker   @relation(fields: [tickerSymbol], references: [symbol], onDelete: Cascade)
+
+  @@id([tickerSymbol, lang])
+}
